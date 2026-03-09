@@ -821,7 +821,7 @@ footer{padding:40px 48px;border-top:1px solid var(--wire);display:flex;justify-c
 function handleForm(e, formId, successId) {
   e.preventDefault();
   const email = document.getElementById(formId === 'heroForm' ? 'heroEmail' : 'ctaEmail').value;
-  const ENDPOINT = 'https://formspree.io/f/REPLACE_WITH_YOUR_ID';
+  const ENDPOINT = 'https://formspree.io/f/xvzwzyzv';
   fetch(ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
