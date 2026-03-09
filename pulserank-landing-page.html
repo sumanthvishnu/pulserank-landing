@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PulseRank — Is Your Brand Invisible to AI Search?</title>
+<meta name="description" content="ChatGPT, Perplexity and Gemini are replacing Google. Track your brand's AI visibility, benchmark competitors, and get a fix roadmap — all in one dashboard.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#030608;
+  --ink2:#080c10;
+  --ink3:#0d1318;
+  --wire:#131920;
+  --wire2:#1c2530;
+  --wire3:#242f3c;
+  --text:#dde8f0;
+  --text2:#7a96aa;
+  --text3:#3a5060;
+  --lime:#a3e635;
+  --lime2:#bef264;
+  --teal:#0ea5e9;
+  --amber:#f59e0b;
+  --red:#ef4444;
+  --r:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.6;overflow-x:hidden}
+
+/* scanline effect */
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px);pointer-events:none;z-index:999}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:0 48px;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(3,6,8,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--wire)}
+.logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--text);text-decoration:none}
+.logo span{color:var(--lime)}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{color:var(--text2);font-size:13px;text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--lime);color:#000;padding:7px 18px;border-radius:6px;font-weight:600;font-size:13px;transition:all .2s}
+.nav-cta:hover{background:var(--lime2);color:#000!important}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:100px 24px 60px;text-align:center;position:relative;overflow:hidden}
+
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(var(--wire) 1px,transparent 1px),linear-gradient(90deg,var(--wire) 1px,transparent 1px);background-size:60px 60px;opacity:0.4;mask-image:radial-gradient(ellipse 80% 60% at 50% 50%,black 20%,transparent 100%)}
+
+.hero-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.12}
+.orb1{width:500px;height:500px;background:var(--lime);top:-100px;left:-100px}
+.orb2{width:400px;height:400px;background:var(--teal);bottom:-80px;right:-80px}
+
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.2);border-radius:100px;padding:5px 14px;font-family:'DM Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:28px;animation:fadeUp .5s ease both}
+
+.hero-eyebrow::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--lime);animation:blink 1.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}
+
+h1{font-family:'Syne',sans-serif;font-size:clamp(40px,6.5vw,80px);font-weight:800;line-height:1.05;letter-spacing:-2px;max-width:860px;margin:0 auto 20px;animation:fadeUp .5s .08s ease both}
+h1 .accent{color:var(--lime)}
+h1 .dim{color:var(--text3)}
+
+.hero-sub{font-size:17px;color:var(--text2);max-width:500px;margin:0 auto 44px;line-height:1.75;animation:fadeUp .5s .16s ease both}
+
+.hero-form{display:flex;gap:8px;max-width:460px;width:100%;margin:0 auto 16px;animation:fadeUp .5s .24s ease both}
+.hero-form input{flex:1;padding:13px 18px;background:var(--ink2);border:1px solid var(--wire2);border-radius:var(--r);color:var(--text);font-size:14px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s}
+.hero-form input:focus{border-color:rgba(163,230,53,0.5)}
+.hero-form input::placeholder{color:var(--text3)}
+
+.btn-lime{background:var(--lime);color:#000;padding:13px 24px;border-radius:var(--r);font-weight:700;font-size:14px;border:none;cursor:pointer;white-space:nowrap;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-lime:hover{background:var(--lime2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(163,230,53,0.25)}
+
+.hero-note{font-size:12px;color:var(--text3);animation:fadeUp .5s .3s ease both}
+
+/* TICKER */
+.ticker-wrap{position:relative;overflow:hidden;padding:14px 0;background:var(--ink2);border-top:1px solid var(--wire);border-bottom:1px solid var(--wire);margin-top:60px;width:100vw}
+.ticker{display:flex;gap:0;animation:ticker 30s linear infinite;width:max-content}
+.ticker:hover{animation-play-state:paused}
+.tick-item{display:flex;align-items:center;gap:10px;padding:0 36px;white-space:nowrap;font-family:'DM Mono',monospace;font-size:11px;border-right:1px solid var(--wire)}
+.tick-label{color:var(--text3)}
+.tick-val{font-weight:500}
+.tick-val.up{color:var(--lime)}
+.tick-val.down{color:var(--red)}
+.tick-val.neutral{color:var(--amber)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* DEMO PANEL */
+.demo-section{padding:80px 24px;max-width:1100px;margin:0 auto}
+
+.demo-shell{background:var(--ink2);border:1px solid var(--wire2);border-radius:14px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.5)}
+
+.demo-bar{background:var(--ink3);padding:10px 16px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--wire)}
+.demo-dots{display:flex;gap:5px}
+.demo-dots span{width:9px;height:9px;border-radius:50%}
+.demo-dots span:nth-child(1){background:#ff5f57}
+.demo-dots span:nth-child(2){background:#febc2e}
+.demo-dots span:nth-child(3){background:#28c840}
+.demo-url{flex:1;background:var(--wire);border-radius:4px;padding:4px 12px;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)}
+.demo-badge{font-family:'DM Mono',monospace;font-size:9px;color:var(--lime);letter-spacing:1px}
+
+.demo-body{display:grid;grid-template-columns:200px 1fr 280px;min-height:420px}
+
+/* sidebar */
+.demo-sidebar{padding:20px 0;border-right:1px solid var(--wire)}
+.demo-logo-area{padding:0 16px 16px;border-bottom:1px solid var(--wire);margin-bottom:16px}
+.demo-logo-area .brand{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text)}
+.demo-logo-area .domain{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.demo-nav-item{padding:7px 16px;display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;transition:background .15s;color:var(--text2)}
+.demo-nav-item.active{background:rgba(163,230,53,0.08);color:var(--lime);border-right:2px solid var(--lime)}
+.demo-nav-item .icon{font-size:13px;width:16px}
+
+/* main */
+.demo-main{padding:20px 24px;overflow:hidden}
+.demo-main-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+.demo-main-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700}
+.demo-main-sub{font-size:11px;color:var(--text2);margin-top:2px}
+.demo-refresh{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+
+.score-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.score-card{background:var(--ink3);border:1px solid var(--wire);border-radius:8px;padding:12px 14px}
+.sc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
+.sc-num{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;line-height:1}
+.sc-num.good{color:var(--lime)}
+.sc-num.mid{color:var(--amber)}
+.sc-num.bad{color:var(--red)}
+.sc-trend{font-family:'DM Mono',monospace;font-size:10px;margin-top:4px}
+.sc-trend.up{color:var(--lime)}
+.sc-trend.dn{color:var(--red)}
+
+.engine-rows{display:flex;flex-direction:column;gap:8px}
+.eng-row{background:var(--ink3);border:1px solid var(--wire);border-radius:7px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.eng-name{font-size:11px;font-weight:600;width:72px;flex-shrink:0}
+.eng-bar-wrap{flex:1;height:6px;background:var(--wire2);border-radius:3px;overflow:hidden}
+.eng-bar{height:100%;border-radius:3px;transition:width 1s ease}
+.eng-pct{font-family:'DM Mono',monospace;font-size:11px;width:36px;text-align:right}
+.eng-status{font-size:10px;padding:2px 7px;border-radius:20px;flex-shrink:0;font-family:'DM Mono',monospace}
+.eng-status.cited{background:rgba(163,230,53,0.1);color:var(--lime)}
+.eng-status.partial{background:rgba(245,158,11,0.1);color:var(--amber)}
+.eng-status.missing{background:rgba(239,68,68,0.1);color:var(--red)}
+
+/* right panel */
+.demo-right{padding:18px 16px;border-left:1px solid var(--wire);background:var(--ink3)}
+.demo-right-title{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px}
+.fix-item{background:var(--ink2);border:1px solid var(--wire);border-radius:7px;padding:10px 12px;margin-bottom:8px}
+.fix-priority{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.fix-priority.high{color:var(--red)}
+.fix-priority.med{color:var(--amber)}
+.fix-priority.low{color:var(--lime)}
+.fix-text{font-size:11px;color:var(--text2);line-height:1.5}
+.fix-impact{margin-top:6px;font-family:'DM Mono',monospace;font-size:10px;color:var(--teal)}
+
+/* SECTIONS */
+.section{padding:100px 24px;max-width:1100px;margin:0 auto}
+.full-bleed{background:var(--ink2);border-top:1px solid var(--wire);border-bottom:1px solid var(--wire)}
+.full-bleed .section{max-width:1100px}
+
+.eyebrow{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:14px}
+h2{font-family:'Syne',sans-serif;font-size:clamp(30px,4.5vw,52px);font-weight:800;line-height:1.08;letter-spacing:-1.5px;margin-bottom:16px}
+h2 .accent{color:var(--lime)}
+.section-sub{font-size:15px;color:var(--text2);max-width:480px;line-height:1.75;margin-bottom:56px}
+
+/* WHY NOW */
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.why-card{background:var(--ink2);border:1px solid var(--wire2);border-radius:var(--r);padding:28px;transition:border-color .2s}
+.why-card:hover{border-color:rgba(163,230,53,0.3)}
+.why-num{font-family:'Syne',sans-serif;font-size:44px;font-weight:800;color:var(--lime);line-height:1;margin-bottom:8px}
+.why-label{font-size:14px;font-weight:600;margin-bottom:8px}
+.why-desc{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* COMPETITOR TABLE */
+.comp-table{width:100%;border-collapse:collapse;font-size:13px}
+.comp-table th{text-align:left;padding:10px 14px;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);border-bottom:1px solid var(--wire);font-weight:400}
+.comp-table td{padding:12px 14px;border-bottom:1px solid var(--wire);color:var(--text2)}
+.comp-table tr:hover td{background:var(--ink2)}
+.comp-table td:first-child{color:var(--text);font-weight:500}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace;font-size:10px}
+.badge.bad{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.badge.mid{background:rgba(245,158,11,0.1);color:var(--amber);border:1px solid rgba(245,158,11,0.2)}
+.badge.good{background:rgba(163,230,53,0.1);color:var(--lime);border:1px solid rgba(163,230,53,0.2)}
+.comp-table tr.highlight-row td{background:rgba(163,230,53,0.04);color:var(--text)}
+.comp-table tr.highlight-row td:first-child{color:var(--lime)}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;position:relative}
+.step{background:var(--ink2);border:1px solid var(--wire2);border-radius:var(--r);padding:24px 20px;transition:all .2s;position:relative}
+.step:hover{border-color:rgba(163,230,53,0.35);transform:translateY(-4px)}
+.step-num{font-family:'DM Mono',monospace;font-size:11px;color:var(--lime);letter-spacing:2px;margin-bottom:12px}
+.step-icon{font-size:26px;margin-bottom:12px}
+.step-title{font-size:14px;font-weight:600;margin-bottom:8px}
+.step-desc{font-size:12px;color:var(--text2);line-height:1.6}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.feat-card{background:var(--ink3);border:1px solid var(--wire2);border-radius:var(--r);padding:28px;transition:border-color .2s}
+.feat-card:hover{border-color:rgba(163,230,53,0.25)}
+.feat-card.featured{grid-column:span 2;background:linear-gradient(135deg,rgba(163,230,53,0.05) 0%,var(--ink3) 50%);border-color:rgba(163,230,53,0.25)}
+.feat-tag{display:inline-block;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.2);color:var(--lime);font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.feat-icon{font-size:22px;margin-bottom:12px}
+.feat-title{font-size:15px;font-weight:600;margin-bottom:8px}
+.feat-desc{font-size:13px;color:var(--text2);line-height:1.65}
+
+/* WHO IT'S FOR */
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.who-card{border:1px solid var(--wire2);border-radius:var(--r);padding:28px;background:var(--ink2)}
+.who-icon{font-size:32px;margin-bottom:16px}
+.who-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;margin-bottom:8px}
+.who-desc{font-size:13px;color:var(--text2);line-height:1.65;margin-bottom:16px}
+.who-quote{font-style:italic;font-size:13px;color:var(--text2);border-left:2px solid rgba(163,230,53,0.3);padding-left:12px;line-height:1.6}
+
+/* PRICING */
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
+.price-card{background:var(--ink2);border:1px solid var(--wire2);border-radius:14px;padding:28px;transition:all .2s;position:relative}
+.price-card:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,0.3)}
+.price-card.pop{border-color:rgba(163,230,53,0.4);background:linear-gradient(160deg,rgba(163,230,53,0.05) 0%,var(--ink2) 60%)}
+.pop-tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--lime);color:#000;font-size:10px;font-weight:700;padding:3px 14px;border-radius:20px;white-space:nowrap}
+.p-tier{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:18px}
+.p-who{font-size:11px;color:var(--lime);margin-bottom:18px}
+.p-price{font-family:'Syne',sans-serif;font-size:46px;font-weight:800;line-height:1;color:var(--text)}
+.p-price sub{font-size:16px;color:var(--text2);vertical-align:bottom;margin-bottom:4px}
+.p-price sup{font-size:20px;color:var(--text2)}
+.p-period{font-size:12px;color:var(--text3);margin-top:4px;margin-bottom:24px}
+.p-features{list-style:none;margin-bottom:28px}
+.p-features li{padding:7px 0;border-bottom:1px solid var(--wire);font-size:12px;color:var(--text2);display:flex;align-items:flex-start;gap:8px}
+.p-features li::before{content:'✓';color:var(--lime);flex-shrink:0;font-weight:700}
+.p-features li.dim::before{color:var(--text3)}
+.p-features li.dim{color:var(--text3)}
+.btn-fill{width:100%;background:var(--lime);color:#000;border:none;padding:11px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-fill:hover{background:var(--lime2)}
+.btn-ghost{width:100%;background:transparent;color:var(--text);border:1px solid var(--wire2);padding:11px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'DM Sans',sans-serif}
+.btn-ghost:hover{border-color:rgba(163,230,53,0.4);color:var(--lime)}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.testi{background:var(--ink2);border:1px solid var(--wire2);border-radius:var(--r);padding:24px;transition:border-color .2s}
+.testi:hover{border-color:rgba(163,230,53,0.25)}
+.testi-stars{color:var(--lime);font-size:13px;margin-bottom:14px}
+.testi-text{font-size:14px;line-height:1.7;color:var(--text);font-style:italic;margin-bottom:18px}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.testi-name{font-size:12px;font-weight:600}
+.testi-role{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* FAQ */
+.faq-wrap{max-width:680px;margin:0 auto}
+.faq-item{border-bottom:1px solid var(--wire);padding:20px 0}
+.faq-q{font-size:15px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;transition:color .2s;user-select:none}
+.faq-q:hover{color:var(--lime)}
+.faq-icon{width:22px;height:22px;border-radius:50%;border:1px solid var(--wire2);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text2);flex-shrink:0;transition:all .2s}
+.faq-a{font-size:13px;color:var(--text2);line-height:1.75;padding-top:14px;display:none}
+.faq-item.open .faq-a{display:block}
+.faq-item.open .faq-icon{background:var(--lime);border-color:var(--lime);color:#000}
+
+/* CTA */
+.cta-wrap{padding:100px 24px;text-align:center;position:relative;overflow:hidden}
+.cta-wrap::before{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(163,230,53,0.06) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.cta-inner{max-width:560px;margin:0 auto;position:relative}
+
+/* FOOTER */
+footer{padding:40px 48px;border-top:1px solid var(--wire);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.foot-logo{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;letter-spacing:-.5px}
+.foot-logo span{color:var(--lime)}
+.foot-links{display:flex;gap:20px;flex-wrap:wrap}
+.foot-links a{color:var(--text3);font-size:12px;text-decoration:none;transition:color .2s}
+.foot-links a:hover{color:var(--text)}
+.foot-copy{font-size:12px;color:var(--text3)}
+
+/* SUCCESS */
+.form-success{display:none;background:rgba(163,230,53,0.08);border:1px solid rgba(163,230,53,0.25);border-radius:var(--r);padding:14px 20px;color:var(--lime);font-size:13px;text-align:center}
+
+/* ANIMATE */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.au{opacity:0;transform:translateY(24px);transition:opacity .65s ease,transform .65s ease}
+.au.in{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  nav{padding:0 16px}
+  .nav-links{display:none}
+  .hero{padding:90px 16px 50px}
+  .hero-form{flex-direction:column}
+  .section{padding:70px 16px}
+  .full-bleed .section{padding:70px 16px}
+  .demo-body{grid-template-columns:1fr}
+  .demo-sidebar,.demo-right{display:none}
+  .why-grid,.feat-grid,.price-grid,.testi-grid,.who-grid{grid-template-columns:1fr}
+  .feat-card.featured{grid-column:span 1}
+  .steps{grid-template-columns:1fr 1fr}
+  h1{letter-spacing:-1px}
+  h2{letter-spacing:-.5px}
+  footer{padding:28px 16px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">Pulse<span>Rank</span></a>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#faq">FAQ</a>
+    <a href="#waitlist" class="nav-cta">Get Early Access</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-orbs"><div class="orb orb1"></div><div class="orb orb2"></div></div>
+
+  <div class="hero-eyebrow">New · AI Search Visibility Platform</div>
+
+  <h1>
+    Your brand ranks #1 on Google.<br>
+    <span class="accent">ChatGPT has never</span><br>
+    <span class="dim">heard of you.</span>
+  </h1>
+
+  <p class="hero-sub">PulseRank tracks your brand's visibility across ChatGPT, Perplexity and Gemini — and tells you exactly how to fix what's broken.</p>
+
+  <div id="waitlist">
+    <form class="hero-form" id="heroForm" onsubmit="handleForm(event,'heroForm','heroSuccess')">
+      <input type="email" id="heroEmail" placeholder="agency@yourco.com" required>
+      <button type="submit" class="btn-lime">Run Free Audit →</button>
+    </form>
+    <div class="form-success" id="heroSuccess">🎉 Audit request received — we'll send your AI visibility report within 24 hours.</div>
+    <p class="hero-note" style="margin-top:10px">Free AI visibility audit for your brand · No credit card required</p>
+  </div>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker" id="ticker">
+    <div class="tick-item"><span class="tick-label">ChatGPT daily users</span><span class="tick-val up">200M+</span></div>
+    <div class="tick-item"><span class="tick-label">Perplexity queries/day</span><span class="tick-val up">100M+</span></div>
+    <div class="tick-item"><span class="tick-label">Google organic clicks lost to AI</span><span class="tick-val down">↓ 25% avg</span></div>
+    <div class="tick-item"><span class="tick-label">Brands invisible in AI search</span><span class="tick-val neutral">~73%</span></div>
+    <div class="tick-item"><span class="tick-label">Marketers tracking AI citations</span><span class="tick-val down">↓ 12%</span></div>
+    <div class="tick-item"><span class="tick-label">AI search market growth (YoY)</span><span class="tick-val up">↑ 340%</span></div>
+    <div class="tick-item"><span class="tick-label">SEO agencies losing clients to AI</span><span class="tick-val down">↑ 41%</span></div>
+    <div class="tick-item"><span class="tick-label">Avg brand AEO score (unoptimised)</span><span class="tick-val neutral">18 / 100</span></div>
+    <!-- repeat for seamless loop -->
+    <div class="tick-item"><span class="tick-label">ChatGPT daily users</span><span class="tick-val up">200M+</span></div>
+    <div class="tick-item"><span class="tick-label">Perplexity queries/day</span><span class="tick-val up">100M+</span></div>
+    <div class="tick-item"><span class="tick-label">Google organic clicks lost to AI</span><span class="tick-val down">↓ 25% avg</span></div>
+    <div class="tick-item"><span class="tick-label">Brands invisible in AI search</span><span class="tick-val neutral">~73%</span></div>
+    <div class="tick-item"><span class="tick-label">Marketers tracking AI citations</span><span class="tick-val down">↓ 12%</span></div>
+    <div class="tick-item"><span class="tick-label">AI search market growth (YoY)</span><span class="tick-val up">↑ 340%</span></div>
+    <div class="tick-item"><span class="tick-label">SEO agencies losing clients to AI</span><span class="tick-val down">↑ 41%</span></div>
+    <div class="tick-item"><span class="tick-label">Avg brand AEO score (unoptimised)</span><span class="tick-val neutral">18 / 100</span></div>
+  </div>
+</div>
+
+<!-- DEMO -->
+<div class="demo-section au">
+  <div class="demo-shell">
+    <div class="demo-bar">
+      <div class="demo-dots"><span></span><span></span><span></span></div>
+      <div class="demo-url">app.pulserank.io/dashboard · acme-corp.com</div>
+      <div class="demo-badge">LIVE</div>
+    </div>
+    <div class="demo-body">
+      <div class="demo-sidebar">
+        <div class="demo-logo-area">
+          <div class="brand">Acme Corp</div>
+          <div class="domain">acme-corp.com</div>
+        </div>
+        <div class="demo-nav-item active"><span class="icon">📊</span> Overview</div>
+        <div class="demo-nav-item"><span class="icon">🔍</span> Query Monitor</div>
+        <div class="demo-nav-item"><span class="icon">⚔️</span> Competitors</div>
+        <div class="demo-nav-item"><span class="icon">🔧</span> Fix Engine</div>
+        <div class="demo-nav-item"><span class="icon">📈</span> Trends</div>
+        <div class="demo-nav-item"><span class="icon">📋</span> Reports</div>
+      </div>
+
+      <div class="demo-main">
+        <div class="demo-main-header">
+          <div>
+            <div class="demo-main-title">AI Visibility Overview</div>
+            <div class="demo-main-sub">Tracking 120 queries across 3 AI engines · Last run: 2 hrs ago</div>
+          </div>
+          <div class="demo-refresh" style="font-size:10px;color:var(--text3)">Next run in 22h</div>
+        </div>
+
+        <div class="score-cards">
+          <div class="score-card">
+            <div class="sc-label">AEO Score</div>
+            <div class="sc-num mid">34<span style="font-size:14px;color:var(--text3)">/100</span></div>
+            <div class="sc-trend up">↑ +6 this week</div>
+          </div>
+          <div class="score-card">
+            <div class="sc-label">Citations Found</div>
+            <div class="sc-num good">41</div>
+            <div class="sc-trend up">↑ +12 since fix</div>
+          </div>
+          <div class="score-card">
+            <div class="sc-label">Queries Missing</div>
+            <div class="sc-num bad">79</div>
+            <div class="sc-trend dn">Fix Engine: 14 actions</div>
+          </div>
+        </div>
+
+        <div class="engine-rows">
+          <div class="eng-row">
+            <div class="eng-name" style="color:#10a37f">ChatGPT</div>
+            <div class="eng-bar-wrap"><div class="eng-bar" style="width:52%;background:#10a37f"></div></div>
+            <div class="eng-pct" style="color:#10a37f">52%</div>
+            <div class="eng-status partial">Partial</div>
+          </div>
+          <div class="eng-row">
+            <div class="eng-name" style="color:#20b2aa">Perplexity</div>
+            <div class="eng-bar-wrap"><div class="eng-bar" style="width:18%;background:#20b2aa"></div></div>
+            <div class="eng-pct" style="color:#20b2aa">18%</div>
+            <div class="eng-status missing">Missing</div>
+          </div>
+          <div class="eng-row">
+            <div class="eng-name" style="color:#4285f4">Gemini</div>
+            <div class="eng-bar-wrap"><div class="eng-bar" style="width:67%;background:#4285f4"></div></div>
+            <div class="eng-pct" style="color:#4285f4">67%</div>
+            <div class="eng-status cited">Cited</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-right">
+        <div class="demo-right-title">⚡ Fix Engine — 14 Actions</div>
+        <div class="fix-item">
+          <div class="fix-priority high">🔴 HIGH PRIORITY</div>
+          <div class="fix-text">Add "best CRM for small teams" to your /features page FAQ in question format.</div>
+          <div class="fix-impact">Est. impact: +8 Perplexity citations</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-priority high">🔴 HIGH PRIORITY</div>
+          <div class="fix-text">Publish a comparison page: "Acme Corp vs HubSpot" — Perplexity cites this format heavily.</div>
+          <div class="fix-impact">Est. impact: +12 citations</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-priority med">🟡 MEDIUM</div>
+          <div class="fix-text">Add structured data (FAQ schema) to your pricing page.</div>
+          <div class="fix-impact">Est. impact: +5 ChatGPT citations</div>
+        </div>
+        <div class="fix-item">
+          <div class="fix-priority low">🟢 QUICK WIN</div>
+          <div class="fix-text">Update your About page to include founding year and team size — AI engines trust authoritative signals.</div>
+          <div class="fix-impact">Est. impact: +3 score points</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- WHY NOW -->
+<div class="full-bleed">
+  <div class="section">
+    <div class="eyebrow au">The shift is happening now</div>
+    <h2 class="au">Google built your traffic.<br>AI is <span class="accent">taking it back.</span></h2>
+    <p class="section-sub au">This is the most significant change in search since mobile. Every day you're invisible in AI search is a day your competitors are being recommended instead of you.</p>
+
+    <div class="why-grid">
+      <div class="why-card au">
+        <div class="why-num">200M</div>
+        <div class="why-label">Daily ChatGPT users asking it to recommend products, services and tools</div>
+        <div class="why-desc">When someone asks ChatGPT "what's the best project management tool for a startup," it recommends 3-5 brands. If yours isn't one of them, that customer is gone — and you'll never know you lost them.</div>
+      </div>
+      <div class="why-card au">
+        <div class="why-num">↓25%</div>
+        <div class="why-label">Average Google organic traffic decline in categories where AI Overviews dominate</div>
+        <div class="why-desc">The SEO playbook that delivered ROI for 20 years is breaking. Your #1 Google ranking is still valuable — but it no longer guarantees discovery. AI search is a parallel channel that follows completely different rules.</div>
+      </div>
+      <div class="why-card au">
+        <div class="why-num">73%</div>
+        <div class="why-label">Of brands have zero visibility in the AI engines most relevant to their category</div>
+        <div class="why-desc">Most brands haven't even checked. They're not measuring it, not optimising for it, and not tracking whether their investment in content and SEO is translating into AI citations. This is the gap PulseRank closes.</div>
+      </div>
+      <div class="why-card au">
+        <div class="why-num">$0</div>
+        <div class="why-label">Tools that tell you HOW to fix AI invisibility — until now</div>
+        <div class="why-desc">Every competitor tracks the problem. None prescribe the cure. Otterly, Profound, Peec — they all show you a dashboard of bad news with no path forward. PulseRank's Fix Engine generates specific, prioritised content actions tied to real citation outcomes.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<div class="section" id="how">
+  <div class="eyebrow au">How it works</div>
+  <h2 class="au">Set up in 5 minutes.<br><span class="accent">Insights in 24 hours.</span></h2>
+  <p class="section-sub au">No code. No integration. Just enter your domain and the queries that matter to your business.</p>
+
+  <div class="steps">
+    <div class="step au">
+      <div class="step-num">STEP 01</div>
+      <div class="step-icon">🌐</div>
+      <div class="step-title">Enter your domain</div>
+      <p class="step-desc">Connect your brand. Add the queries your ideal customers type into ChatGPT, Perplexity, and Gemini when looking for a product like yours.</p>
+    </div>
+    <div class="step au">
+      <div class="step-num">STEP 02</div>
+      <div class="step-icon">🤖</div>
+      <div class="step-title">We run 100+ queries</div>
+      <p class="step-desc">PulseRank programmatically queries all three AI engines daily, recording every citation, every recommendation, and every competitor mention.</p>
+    </div>
+    <div class="step au">
+      <div class="step-num">STEP 03</div>
+      <div class="step-icon">📊</div>
+      <div class="step-title">See your AEO score</div>
+      <p class="step-desc">Your brand's AI Visibility Score, broken down by engine, query category, and competitor comparison. Know exactly where you stand.</p>
+    </div>
+    <div class="step au">
+      <div class="step-num">STEP 04</div>
+      <div class="step-icon">⚡</div>
+      <div class="step-title">Execute the Fix Engine</div>
+      <p class="step-desc">PulseRank generates specific content actions — page updates, FAQ additions, schema changes — ranked by their estimated citation impact. You fix it. Your score rises.</p>
+    </div>
+  </div>
+</div>
+
+<!-- COMPETITOR TABLE -->
+<div class="full-bleed">
+  <div class="section">
+    <div class="eyebrow au">Competitor comparison</div>
+    <h2 class="au">The only platform that<br><span class="accent">prescribes the fix.</span></h2>
+    <p class="section-sub au">Every other tool shows you the problem. We're the only one that tells you how to solve it — at a price that makes sense for agencies.</p>
+
+    <div style="overflow-x:auto" class="au">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Platform</th>
+            <th>Monthly Price</th>
+            <th>Prompts Included</th>
+            <th>Fix Recommendations</th>
+            <th>GA4 Attribution</th>
+            <th>Agency White-label</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Profound</td>
+            <td><span class="badge bad">$99 – $499</span></td>
+            <td><span class="badge bad">50 (starter)</span></td>
+            <td><span class="badge bad">None</span></td>
+            <td><span class="badge bad">No</span></td>
+            <td><span class="badge bad">No</span></td>
+          </tr>
+          <tr>
+            <td>Otterly AI</td>
+            <td><span class="badge bad">$29 – $149</span></td>
+            <td><span class="badge bad">10 (starter!)</span></td>
+            <td><span class="badge bad">None</span></td>
+            <td><span class="badge bad">No</span></td>
+            <td><span class="badge mid">Partial</span></td>
+          </tr>
+          <tr>
+            <td>Peec AI</td>
+            <td><span class="badge bad">$105 – $235</span></td>
+            <td><span class="badge mid">Unlimited</span></td>
+            <td><span class="badge bad">None</span></td>
+            <td><span class="badge bad">No</span></td>
+            <td><span class="badge bad">No</span></td>
+          </tr>
+          <tr>
+            <td>Semrush AI Toolkit</td>
+            <td><span class="badge bad">$240+ (base + add-on)</span></td>
+            <td><span class="badge mid">Varies</span></td>
+            <td><span class="badge bad">None</span></td>
+            <td><span class="badge mid">Partial</span></td>
+            <td><span class="badge bad">No</span></td>
+          </tr>
+          <tr class="highlight-row">
+            <td>⚡ PulseRank</td>
+            <td><span class="badge good">$29 – $199</span></td>
+            <td><span class="badge good">100 – Unlimited</span></td>
+            <td><span class="badge good">✓ Fix Engine</span></td>
+            <td><span class="badge good">✓ GA4 native</span></td>
+            <td><span class="badge good">✓ Agency plan</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<div class="section" id="features">
+  <div class="eyebrow au">Features</div>
+  <h2 class="au">Built for agencies that<br><span class="accent">bill results, not reports.</span></h2>
+  <p class="section-sub au">Every feature maps to a client deliverable. Run it, export it, bill for it.</p>
+
+  <div class="feat-grid">
+    <div class="feat-card featured au">
+      <div class="feat-tag">Core Differentiator</div>
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Fix Engine — Turn Gaps Into Actionable Content Briefs</div>
+      <p class="feat-desc">Every other tool shows you where your brand is invisible. PulseRank is the only platform that tells you exactly what to write, where to add it on your site, and what citation improvement to expect. Each fix is mapped to a specific query you're missing and ranked by estimated impact. This is the feature every SEO agency's clients actually want.</p>
+    </div>
+
+    <div class="feat-card au">
+      <div class="feat-icon">🎯</div>
+      <div class="feat-title">AEO Score — Your AI Visibility Number</div>
+      <p class="feat-desc">A single 0–100 score that tracks your brand's AI search presence over time. Break it down by engine (ChatGPT, Perplexity, Gemini), query category, and geography. Your clients can understand it in 10 seconds.</p>
+    </div>
+
+    <div class="feat-card au">
+      <div class="feat-icon">⚔️</div>
+      <div class="feat-title">Competitor Intelligence</div>
+      <p class="feat-desc">See which competitors are being cited instead of your client — and on which specific queries. Understand the exact content and page formats that earn them citations. Steal the strategy, not the guesswork.</p>
+    </div>
+
+    <div class="feat-card au">
+      <div class="feat-icon">📈</div>
+      <div class="feat-title">GA4 Traffic Attribution</div>
+      <p class="feat-desc">The only platform that connects AI citation improvements to actual traffic changes in GA4. Prove to your client that fixing their AEO score is driving real visits — not just vanity metrics.</p>
+    </div>
+
+    <div class="feat-card au">
+      <div class="feat-icon">📋</div>
+      <div class="feat-title">White-label Client Reports</div>
+      <p class="feat-desc">One-click export to a branded PDF report with your agency logo. Send it Monday morning. Clients see their score, what improved, and what's next. Your retainer is justified before the call starts.</p>
+    </div>
+
+    <div class="feat-card au">
+      <div class="feat-icon">📧</div>
+      <div class="feat-title">Weekly Digest Alerts</div>
+      <p class="feat-desc">Automated email every Monday: score changes, new competitor citations, and top 3 fix priorities for the week. You stay informed without logging in daily. Clients stay impressed without you lifting a finger.</p>
+    </div>
+  </div>
+</div>
+
+<!-- WHO IT'S FOR -->
+<div class="full-bleed">
+  <div class="section">
+    <div class="eyebrow au">Who it's for</div>
+    <h2 class="au">Built for three kinds<br>of <span class="accent">people.</span></h2>
+
+    <div class="who-grid">
+      <div class="who-card au">
+        <div class="who-icon">🏢</div>
+        <div class="who-title">SEO Agencies</div>
+        <p class="who-desc">Your clients are asking about AI search. You need a tool you can resell, white-label, and use to justify your retainer in a world where Google rankings matter less each month.</p>
+        <p class="who-quote">"My clients started asking 'why isn't our brand in ChatGPT?' I had no answer. Now I have a dashboard, a fix plan, and a white-label report. PulseRank added £2,000/month to my retainers."</p>
+      </div>
+      <div class="who-card au">
+        <div class="who-icon">📣</div>
+        <div class="who-title">In-house Marketing Teams</div>
+        <p class="who-desc">You spent years building Google authority. You're watching traffic decline while AI search grows. You need to understand what your AI presence actually looks like — and have something to show the CMO.</p>
+        <p class="who-quote">"I presented our AI visibility score to the board and it landed harder than any SEO report I've ever made. The fix roadmap gave us a quarterly content plan in 20 minutes."</p>
+      </div>
+      <div class="who-card au">
+        <div class="who-icon">🚀</div>
+        <div class="who-title">SaaS Founders & Startups</div>
+        <p class="who-desc">You're in a competitive category. When someone asks ChatGPT "what's the best tool for X," you need to be on that list. Right now you probably aren't — and you have no idea why.</p>
+        <p class="who-quote">"Three of our competitors were getting cited in Perplexity constantly. PulseRank showed me they all had comparison pages. I built one in a week. Citations doubled in 30 days."</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<div class="section" id="pricing">
+  <div class="eyebrow au">Pricing</div>
+  <h2 class="au">Less than one client retainer.<br><span class="accent">Billable to all of them.</span></h2>
+  <p class="section-sub au">Agency plan pays for itself the moment you bill your first AI visibility audit.</p>
+
+  <div class="price-grid">
+    <div class="price-card au">
+      <div class="p-tier">Starter</div>
+      <div class="p-who">✦ For founders & in-house teams</div>
+      <div class="p-price"><sup>$</sup>29<sub>/mo</sub></div>
+      <p class="p-period">1 brand · billed monthly</p>
+      <ul class="p-features">
+        <li>100 queries/month</li>
+        <li>ChatGPT + Perplexity + Gemini</li>
+        <li>AEO score dashboard</li>
+        <li>Fix Engine (top 10 actions)</li>
+        <li>Weekly email digest</li>
+        <li>Competitor tracking (2 brands)</li>
+        <li class="dim">GA4 attribution</li>
+        <li class="dim">White-label reports</li>
+      </ul>
+      <button class="btn-ghost" onclick="scrollWait()">Get Started</button>
+    </div>
+
+    <div class="price-card pop au">
+      <div class="pop-tag">Most Popular</div>
+      <div class="p-tier">Growth</div>
+      <div class="p-who">✦ For serious SEO teams</div>
+      <div class="p-price"><sup>$</sup>79<sub>/mo</sub></div>
+      <p class="p-period">3 brands · billed monthly</p>
+      <ul class="p-features">
+        <li>500 queries/month</li>
+        <li>All 3 AI engines + alerts</li>
+        <li>Full Fix Engine (all actions)</li>
+        <li>GA4 traffic attribution</li>
+        <li>Competitor tracking (5 brands)</li>
+        <li>Priority query processing</li>
+        <li>CSV + PDF export</li>
+        <li class="dim">White-label reports</li>
+      </ul>
+      <button class="btn-fill" onclick="scrollWait()">Get Early Access</button>
+    </div>
+
+    <div class="price-card au">
+      <div class="p-tier">Agency</div>
+      <div class="p-who">✦ For SEO agencies</div>
+      <div class="p-price"><sup>$</sup>199<sub>/mo</sub></div>
+      <p class="p-period">Unlimited brands · billed monthly</p>
+      <ul class="p-features">
+        <li>Unlimited brands & queries</li>
+        <li>White-label client reports</li>
+        <li>Your logo, your domain</li>
+        <li>GA4 + Search Console connect</li>
+        <li>Bulk brand import</li>
+        <li>Client-facing dashboard share</li>
+        <li>Priority support</li>
+        <li>Custom query library</li>
+      </ul>
+      <button class="btn-ghost" onclick="scrollWait()">Contact Sales</button>
+    </div>
+  </div>
+</div>
+
+<!-- TESTIMONIALS -->
+<div class="full-bleed">
+  <div class="section">
+    <div class="eyebrow au">Early users</div>
+    <h2 class="au">What beta users<br><span class="accent">are saying.</span></h2>
+
+    <div class="testi-grid">
+      <div class="testi au">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I run a 12-person SEO agency. PulseRank let me add AI visibility audits as a new service line. Added $4,800/month in retainer revenue in 6 weeks. The white-label reports are client-ready with zero editing."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:rgba(163,230,53,0.12);color:var(--lime)">MR</div>
+          <div><div class="testi-name">Marcus R.</div><div class="testi-role">Founder · SEO Agency, London</div></div>
+        </div>
+      </div>
+      <div class="testi au">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"Our SaaS was invisible in Perplexity while 3 competitors were getting cited constantly. Fix Engine told me exactly why. I built two comparison pages in a week. Our citation count went from 4 to 31 in 30 days."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:rgba(14,165,233,0.12);color:var(--teal)">PK</div>
+          <div><div class="testi-name">Priya K.</div><div class="testi-role">Head of Marketing · B2B SaaS, Singapore</div></div>
+        </div>
+      </div>
+      <div class="testi au">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-text">"I was paying $399/month for Profound and getting monitoring-only reports. PulseRank at $79/month gives me more data AND the fix recommendations. I cancelled Profound the same day."</p>
+        <div class="testi-author">
+          <div class="testi-av" style="background:rgba(245,158,11,0.12);color:var(--amber)">JL</div>
+          <div><div class="testi-name">Jamie L.</div><div class="testi-role">Digital Marketing Director · Retail Brand</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div class="section" id="faq">
+  <div class="eyebrow au" style="text-align:center">FAQ</div>
+  <h2 class="au" style="text-align:center;margin-bottom:48px">Common questions</h2>
+
+  <div class="faq-wrap">
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">What exactly is AEO (Answer Engine Optimisation)?<div class="faq-icon">+</div></div>
+      <div class="faq-a">AEO is to ChatGPT, Perplexity and Gemini what SEO is to Google. When someone asks an AI engine to recommend a product, service, or tool in your category, appearing in that recommendation is AEO. The rules are completely different from Google — AI engines favour authoritative, well-structured, comparison-rich content rather than keyword density and backlinks. PulseRank measures your AEO performance and tells you how to improve it.</div>
+    </div>
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">How is this different from Otterly, Profound, or Peec?<div class="faq-icon">+</div></div>
+      <div class="faq-a">All three are monitoring tools only. They show you where you're invisible and leave you to figure out why and what to do about it. PulseRank's Fix Engine generates specific, prioritised content recommendations tied to real citation gaps — giving you a clear action plan, not just a report of problems. We also include GA4 attribution (so you can prove ROI) and white-label reports for agencies, at a fraction of the cost of Profound.</div>
+    </div>
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">Do I need to connect my website or install anything?<div class="faq-icon">+</div></div>
+      <div class="faq-a">No installation required. You enter your domain and a list of queries relevant to your business, and PulseRank does the rest. GA4 connection is optional (for the attribution feature) and takes 2 minutes via standard OAuth. Nothing is installed on your site.</div>
+    </div>
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">How does the Fix Engine actually work?<div class="faq-icon">+</div></div>
+      <div class="faq-a">When PulseRank detects you're missing from a specific query, it analyses the pages currently being cited by AI engines for that query. It identifies patterns — page format, content type, FAQ structure, comparison format, schema markup — and generates a prioritised content brief for your site. Each fix includes the specific URL to update, the content to add or change, and an estimated citation improvement based on similar fixes we've tracked across our user base.</div>
+    </div>
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">How often does PulseRank run queries against AI engines?<div class="faq-icon">+</div></div>
+      <div class="faq-a">By default, your full query library runs once every 24 hours. Growth and Agency plans can trigger on-demand re-runs after making content changes, so you can verify fixes are being picked up. You get an email alert any time your AEO score changes by more than 5 points.</div>
+    </div>
+    <div class="faq-item au">
+      <div class="faq-q" onclick="toggleFaq(this)">I run an SEO agency. How do client reports work?<div class="faq-icon">+</div></div>
+      <div class="faq-a">Agency plan gives you white-label PDF reports with your agency's branding, logo, and domain. Each report contains the client's AEO score, engine breakdown, top competitor citations, and Fix Engine actions for the month. One-click generation. Most agencies send these as part of their monthly retainer reporting — it typically adds $200-500/month to what they can charge per client.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta-wrap">
+  <div class="cta-inner">
+    <div class="eyebrow au" style="display:flex;justify-content:center">Limited Early Access</div>
+    <h2 class="au">Your competitors are already<br>optimising for <span class="accent">AI search.</span></h2>
+    <p class="section-sub au" style="margin:0 auto 36px;text-align:center">Get a free AI visibility audit for your brand — delivered within 24 hours. No credit card. No install.</p>
+
+    <form class="hero-form au" id="ctaForm" onsubmit="handleForm(event,'ctaForm','ctaSuccess')" style="margin-bottom:12px">
+      <input type="email" id="ctaEmail" placeholder="agency@yourco.com" required>
+      <button type="submit" class="btn-lime">Get Free Audit →</button>
+    </form>
+    <div class="form-success" id="ctaSuccess">🎉 Audit request received — expect your AI visibility report within 24 hours.</div>
+    <p class="hero-note au">Joining 420+ marketers and agencies already on the waitlist</p>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-logo">Pulse<span>Rank</span></div>
+  <div class="foot-links">
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Service</a>
+    <a href="#">Blog</a>
+    <a href="mailto:hello@pulserank.io">hello@pulserank.io</a>
+  </div>
+  <div class="foot-copy">© 2026 PulseRank. All rights reserved.</div>
+</footer>
+
+<script>
+function handleForm(e, formId, successId) {
+  e.preventDefault();
+  const email = document.getElementById(formId === 'heroForm' ? 'heroEmail' : 'ctaEmail').value;
+  const ENDPOINT = 'https://formspree.io/f/REPLACE_WITH_YOUR_ID';
+  fetch(ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ email, form: formId, ts: new Date().toISOString() })
+  }).catch(() => {}).finally(() => {
+    document.getElementById(formId).style.display = 'none';
+    document.getElementById(successId).style.display = 'block';
+  });
+}
+
+function scrollWait() {
+  document.getElementById('waitlist').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      e.target.style.transitionDelay = (i * 0.06) + 's';
+      e.target.classList.add('in');
+    }
+  });
+}, { threshold: 0.08 });
+document.querySelectorAll('.au').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
